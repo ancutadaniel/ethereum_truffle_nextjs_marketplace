@@ -1,0 +1,26 @@
+{
+  "name": "market-next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "dev:debug": "node --inspect-brk $(which next) dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@metamask/detect-provider": "^2.0.0",
+    "@next/font": "13.1.6",
+    "autoprefixer": "^10.4.13",
+    "eslint": "8.34.0",
+    "eslint-config-next": "13.1.6",
+    "next": "13.1.6",
+    "postcss": "^8.4.21",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "swr": "^2.0.4",
+    "tailwindcss": "^3.2.7",
+    "web3": "^1.8.2"
+  }
+}
