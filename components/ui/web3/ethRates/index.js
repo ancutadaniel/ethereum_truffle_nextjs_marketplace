@@ -1,4 +1,5 @@
-import { useETHPrice } from '@/components/hooks/useETHPrice';
+import { useETHPrice, COURSE_PRICE } from '@/components/hooks/useETHPrice';
+import { Loader } from '@components/ui/common';
 import Image from 'next/image';
 
 export default function EthRates() {
@@ -9,8 +10,18 @@ export default function EthRates() {
       <div className='flex flex-1 items-stretch text-center'>
         <div className='p-10 border drop-shadow rounded-md'>
           <div className='flex items-center'>
-            <Image src='/small-eth.webp' width={35} height={35} alt='ETH' />
-            <span className='text-2xl font-bold'>ETH = {ethPrice.data}$</span>
+            {ethPrice.data ? (
+              <>
+                <Image src='/small-eth.webp' width={35} height={35} alt='ETH' />
+                <span className='text-2xl font-bold'>
+                  ETH = {ethPrice.data}$
+                </span>{' '}
+              </>
+            ) : (
+              <div className='w-full flex justify-center'>
+                <Loader size='md' />
+              </div>
+            )}
           </div>
           <p className='text-xl text-gray-500'>Current eth Price</p>
         </div>
@@ -18,10 +29,16 @@ export default function EthRates() {
       <div className='flex flex-1 items-stretch text-center'>
         <div className='p-10 border drop-shadow rounded-md'>
           <div>
-            <span className='text-2xl font-bold flex items-center'>
-              <Image src='/small-eth.webp' width={35} height={35} alt='ETH' />
-              {pricePerCourse} = 15$
-            </span>
+            {ethPrice.data ? (
+              <span className='text-2xl font-bold flex items-center'>
+                <Image src='/small-eth.webp' width={35} height={35} alt='ETH' />
+                {pricePerCourse} = {COURSE_PRICE}$
+              </span>
+            ) : (
+              <div className='w-full flex justify-center'>
+                <Loader size='md' />
+              </div>
+            )}
           </div>
           <p className='text-xl text-gray-500'>Price per course</p>
         </div>

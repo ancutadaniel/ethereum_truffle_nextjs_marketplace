@@ -4,3 +4,4 @@ export { default as CourseKeyPoints } from './keypoints';
 export { default as CourseLectures } from './lectures';
 export { default as CourseCard } from './card';
 export { default as OwnedCourseCard } from './card/OwnedCourseCard';
+export { default as CourseFilter } from './filter';

@@ -14,6 +14,10 @@ export default function Marketplace({ courses }) {
   const onPurchase = (course) => setCourse(course);
   const onClose = () => setCourse(null);
 
+  const purchaseCourse = (data) => {
+    console.log(data);
+  };
+
   return (
     <>
       <MarketplaceHeader />
@@ -37,7 +41,13 @@ export default function Marketplace({ courses }) {
           </CourseCard>
         )}
       </CourseList>
-      {course && <OrderModal course={course} onClose={onClose} />}
+      {course && (
+        <OrderModal
+          course={course}
+          onClose={onClose}
+          onSubmit={purchaseCourse}
+        />
+      )}
     </>
   );
 }
