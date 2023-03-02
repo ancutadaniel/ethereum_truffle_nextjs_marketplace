@@ -1,16 +1,21 @@
-export default function Breadcrumbs() {
+import { ActiveLink } from '@components/ui/common';
+
+export default function Breadcrumbs({ links }) {
   return (
-    <nav aria-label='breadcrumb' className='mb-4'>
+    <nav aria-label='breadcrumb'>
       <ol className='flex leading-none text-indigo-600 divide-x divide-indigo-400'>
-        <li className='pr-4'>
-          <a href='#'>Buy</a>
-        </li>
-        <li className='px-4'>
-          <a href='#'>My Orders</a>
-        </li>
-        <li className='px-4'>
-          <a href='#'>All Orders</a>
-        </li>
+        {links.map((link, index) => (
+          <li
+            key={link.href}
+            className={`${
+              index === 0 ? 'pr-4' : 'px-4'
+            }  font-medium text-gray-500 hover:text-gray-900`}
+          >
+            <ActiveLink href={link.href} activeLinkClass='text-yellow-400'>
+              <a>{link.label}</a>
+            </ActiveLink>
+          </li>
+        ))}
       </ol>
     </nav>
   );

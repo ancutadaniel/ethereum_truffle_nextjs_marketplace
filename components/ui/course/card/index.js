@@ -1,13 +1,17 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function Card({ course, children }) {
+export default function Card({ course, children, canPurchase }) {
   return (
     <div className='bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl'>
       <div className='flex h-full'>
         <div className='flex-1 h-full next-image-wrapper'>
           <Image
-            className='object-cover'
+            className={`object-cover ${
+              canPurchase
+                ? 'cursor-pointer'
+                : 'cursor-not-allowed filter grayscale'
+            }`}
             width={300}
             height={300}
             src={course.coverImage}

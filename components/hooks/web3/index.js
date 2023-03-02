@@ -18,3 +18,16 @@ export const useNetwork = () => {
     network: swr,
   };
 };
+
+export const useWallet = () => {
+  const { account } = useAccount();
+  const { network } = useNetwork();
+
+  const canPurchase = !!(account.data && network.isSupported);
+
+  return {
+    account,
+    network,
+    canPurchase,
+  };
+};
