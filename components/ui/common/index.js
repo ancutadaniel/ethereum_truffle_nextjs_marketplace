@@ -4,5 +4,6 @@ import Hero from './hero';
 import Breadcrumbs from './breadcrumbs';
 import Modal from './modal';
 import Button from './button';
+import ActiveLink from './activeLink';
 
-export { Footer, Navbar, Hero, Breadcrumbs, Modal, Button };
+export { Footer, Navbar, Hero, Breadcrumbs, Modal, Button, ActiveLink };

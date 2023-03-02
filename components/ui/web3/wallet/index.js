@@ -1,7 +1,9 @@
 import { useWeb3 } from '@/components/providers/web3';
+import { useWallet } from '@/components/hooks/web3';
 
-export default function Wallet({ account, network }) {
+export default function Wallet() {
   const { requireInstall } = useWeb3();
+  const { account, network } = useWallet();
 
   return (
     <section className='text-white bg-indigo-600 rounded-xl'>

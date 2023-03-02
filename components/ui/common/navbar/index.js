@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { Button } from '@/components/ui/common';
+import { ActiveLink, Button } from '@/components/ui/common';
 import { useWeb3 } from '@/components/providers/web3';
 import { useAccount } from '@/components/hooks/web3';
 
@@ -46,33 +46,28 @@ export default function Navbar() {
         <nav className='relative' aria-label='Global'>
           <div className='flex justify-between items-center'>
             <div>
-              <Link
-                href='/'
-                className='font-medium mr-8 text-gray-500 hover:text-gray-900'
-              >
-                Home
-              </Link>
-              <Link
-                href='/marketplace'
-                className='font-medium mr-8 text-gray-500 hover:text-gray-900'
-              >
-                Marketplace
-              </Link>
-              <Link
-                href='/blogs'
-                className='font-medium mr-8 text-gray-500 hover:text-gray-900'
-              >
-                Blogs
-              </Link>
+              <ActiveLink href='/'>
+                <a className='font-medium mr-8 text-gray-500 hover:text-gray-900'>
+                  Home
+                </a>
+              </ActiveLink>
+              <ActiveLink href='/marketplace'>
+                <a className='font-medium mr-8 text-gray-500 hover:text-gray-900'>
+                  Marketplace
+                </a>
+              </ActiveLink>
+              <ActiveLink href='/blogs'>
+                <a className='font-medium mr-8 text-gray-500 hover:text-gray-900'>
+                  Blogs
+                </a>
+              </ActiveLink>
             </div>
             <div>
-              <Link
-                href='/wishlist'
-                target='_blank'
-                className='font-medium mr-8 text-gray-500 hover:text-gray-900'
-              >
-                Wishlist
-              </Link>
+              <ActiveLink href='/wishlist' target='_blank'>
+                <a className='font-medium mr-8 text-gray-500 hover:text-gray-900'>
+                  Wishlist
+                </a>
+              </ActiveLink>
               {buttonContent}
             </div>
           </div>
