@@ -8,6 +8,7 @@ import React, {
 import Web3 from 'web3';
 import detectEthereumProvider from '@metamask/detect-provider';
 import setupHooks from './hooks/setupHooks';
+import CourseMarketplace from '@build/abi/CourseMarketplace.json';
 
 export const Web3Context = createContext();
 
@@ -27,10 +28,21 @@ const Web3Provider = ({ children }) => {
     if (provider) {
       try {
         const web3 = new Web3(provider);
+        const getNetworkId = await web3.eth.net.getId();
+        const data = await CourseMarketplace.networks[getNetworkId];
+        if (!data) {
+          throw new Error('Smart contract not deployed to selected network');
+        }
+
+        const contract = new web3.eth.Contract(
+          CourseMarketplace.abi,
+          data.address
+        );
+
         setWeb3Api({
           web3,
           provider,
-          contract: null,
+          contract,
           isLoading: false,
           hooks: setupHooks(web3),
         });
