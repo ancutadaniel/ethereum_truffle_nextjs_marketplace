@@ -18,10 +18,10 @@ const LINKS = [
 
 const MarketplaceHeader = () => {
   return (
-    <div className='py-4'>
+    <div className='pt-4'>
       <Wallet />
       <EthRates />
-      <div className='pb-4 px-4 sm:px-6 lg:px-8 flex flex-row-reverse'>
+      <div className='p-4 flex flex-row-reverse'>
         <Breadcrumbs links={LINKS} />
       </div>
     </div>

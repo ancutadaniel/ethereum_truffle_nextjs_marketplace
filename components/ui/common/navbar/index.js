@@ -21,7 +21,11 @@ export default function Navbar() {
   } else if (web3 !== null) {
     if (account.data) {
       buttonContent = (
-        <Button className='cursor-default' variant='primary' hover={false}>
+        <Button
+          className='cursor-default mr-2 text-sm xs:text-base '
+          variant='primary'
+          hover={false}
+        >
           Hi there {account.isAdmin ? 'Admin' : 'User'}
         </Button>
       );
@@ -44,7 +48,7 @@ export default function Navbar() {
     <section>
       <div className='relative pt-6 px-4 sm:px-6 lg:px-8'>
         <nav className='relative' aria-label='Global'>
-          <div className='flex justify-between items-center'>
+          <div className='flex flex-col xs:flex-row justify-between items-center'>
             <div>
               <ActiveLink href='/'>
                 <a className='font-medium mr-8 text-gray-500 hover:text-gray-900'>
@@ -62,7 +66,7 @@ export default function Navbar() {
                 </a>
               </ActiveLink>
             </div>
-            <div>
+            <div className='flex justify-center items-center'>
               <ActiveLink href='/wishlist' target='_blank'>
                 <a className='font-medium mr-8 text-gray-500 hover:text-gray-900'>
                   Wishlist

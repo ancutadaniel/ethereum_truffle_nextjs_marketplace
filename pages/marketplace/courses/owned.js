@@ -4,10 +4,11 @@ import MarketplaceHeader from '@/components/ui/marketplaceHeader';
 import { Button, Message } from '@/components/ui/common';
 import { useAccount, useOwnedCourse } from '@/components/hooks/web3';
 import { getAllCourses } from '@/content/courses/fetcher';
+import { useRouter } from 'next/router';
 
 const OwnedCourses = ({ courses }) => {
+  const router = useRouter();
   const { account } = useAccount();
-
   const { ownedCourse } = useOwnedCourse(courses, account?.data);
 
   return (
@@ -17,7 +18,13 @@ const OwnedCourses = ({ courses }) => {
         {ownedCourse?.data?.map((course) => (
           <OwnedCourseCard key={course.id} course={course}>
             {/* <Message>My custom message!</Message> */}
-            <Button>Watch the course</Button>
+            <Button
+              onClick={() => {
+                router.push(`/courses/${course.slug}`);
+              }}
+            >
+              Watch the course
+            </Button>
           </OwnedCourseCard>
         ))}
       </section>
