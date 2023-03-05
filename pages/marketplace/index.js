@@ -40,8 +40,6 @@ export default function Marketplace({ courses }) {
       }
     );
 
-    console.log(proof);
-
     try {
       const result = await contract.methods
         .purchaseCourse(hexCourseId, proof)

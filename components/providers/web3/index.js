@@ -12,15 +12,21 @@ import CourseMarketplace from '@build/abi/CourseMarketplace.json';
 
 export const Web3Context = createContext();
 
+const createWeb3State = ({
+  web3 = null,
+  provider = null,
+  contract = null,
+  isLoading = true,
+}) => ({
+  web3,
+  provider,
+  contract,
+  isLoading,
+  hooks: setupHooks({ web3, contract, provider }),
+});
+
 const Web3Provider = ({ children }) => {
-  const [web3Api, setWeb3Api] = useState({
-    web3: null,
-    provider: null,
-    contract: null,
-    account: null,
-    isLoading: true,
-    hooks: setupHooks(),
-  });
+  const [web3Api, setWeb3Api] = useState(createWeb3State({}));
 
   const loadProvider = async () => {
     const provider = await detectEthereumProvider();
@@ -39,18 +45,16 @@ const Web3Provider = ({ children }) => {
           data.address
         );
 
-        setWeb3Api({
-          web3,
-          provider,
-          contract,
-          isLoading: false,
-          hooks: setupHooks(web3),
-        });
+        setWeb3Api(
+          createWeb3State({ web3, provider, contract, isLoading: false })
+        );
       } catch (error) {
         console.error(error);
       }
     } else {
-      setWeb3Api((prevState) => ({ ...prevState, isLoading: false }));
+      setWeb3Api((prevState) =>
+        createWeb3State({ ...prevState, isLoading: false })
+      );
       console.log('Please install MetaMask!');
     }
   };
