@@ -17,20 +17,30 @@ export const handlerNetwork = (web3) => () => {
     () => (web3 ? 'web3/network' : null),
     async () => {
       const chainId = await web3.eth.getChainId();
+
+      if (!chainId || !networkMap[chainId]) {
+        throw new Error(
+          'Unsupported network. Please connect to supported network.'
+        );
+      }
+
       return networkMap[chainId];
     }
   );
 
+  const mutator = (chainId) => mutate(networkMap[chainId] ?? null);
+
   useEffect(() => {
-    window.ethereum &&
-      window.ethereum.on(
-        'chainChanged',
-        (chainId) => mutate(networkMap[parseInt(chainId, 16)]) ?? null
-      );
+    window?.ethereum?.on('chainChanged', mutator);
+
+    return () => {
+      window?.ethereum?.removeListener('chainChanged', mutator);
+    };
   }, [web3]);
 
   return {
     data,
+    error,
     targetNetwork,
     isSupported: data === targetNetwork,
     mutate,

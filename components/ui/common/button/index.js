@@ -11,11 +11,12 @@ export default function Button({
       hover ? 'hover:bg-indigo-200' : ''
     }`,
     danger: `text-white bg-red-600 ${hover ? 'hover:bg-red-700' : ''}`,
+    white: `text-indigo-600 bg-white ${hover ? 'hover:bg-gray-100' : ''}`,
   };
 
   return (
     <button
-      className={`px-8 py-3 border rounded-xl text-base font-medium cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed ${className} ${variants[variant]}`}
+      className={`p-2 xs:px-8 xs:py-3 border rounded-xl text-base font-medium cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed ${className} ${variants[variant]}`}
       {...props}
     >
       {children}

@@ -8,18 +8,27 @@ import React, {
 import Web3 from 'web3';
 import detectEthereumProvider from '@metamask/detect-provider';
 import setupHooks from './hooks/setupHooks';
+import CourseMarketplace from '@build/abi/CourseMarketplace.json';
 
 export const Web3Context = createContext();
 
+const createWeb3State = ({
+  web3 = null,
+  provider = null,
+  contract = null,
+  isLoading = true,
+  error = null,
+}) => ({
+  web3,
+  provider,
+  contract,
+  isLoading,
+  error,
+  hooks: setupHooks({ web3, contract, provider }),
+});
+
 const Web3Provider = ({ children }) => {
-  const [web3Api, setWeb3Api] = useState({
-    web3: null,
-    provider: null,
-    contract: null,
-    account: null,
-    isLoading: true,
-    hooks: setupHooks(),
-  });
+  const [web3Api, setWeb3Api] = useState(createWeb3State({}));
 
   const loadProvider = async () => {
     const provider = await detectEthereumProvider();
@@ -27,18 +36,30 @@ const Web3Provider = ({ children }) => {
     if (provider) {
       try {
         const web3 = new Web3(provider);
-        setWeb3Api({
-          web3,
-          provider,
-          contract: null,
-          isLoading: false,
-          hooks: setupHooks(web3),
-        });
+        const getNetworkId = await web3.eth.net.getId();
+        const data = await CourseMarketplace.networks[getNetworkId];
+        if (!data) {
+          throw new Error('Smart contract not deployed to selected network');
+        }
+
+        const contract = new web3.eth.Contract(
+          CourseMarketplace.abi,
+          data.address
+        );
+
+        setWeb3Api(
+          createWeb3State({ web3, provider, contract, isLoading: false })
+        );
       } catch (error) {
         console.error(error);
+        setWeb3Api((prevState) =>
+          createWeb3State({ ...prevState, isLoading: false, error })
+        );
       }
     } else {
-      setWeb3Api((prevState) => ({ ...prevState, isLoading: false }));
+      setWeb3Api((prevState) =>
+        createWeb3State({ ...prevState, isLoading: false })
+      );
       console.log('Please install MetaMask!');
     }
   };

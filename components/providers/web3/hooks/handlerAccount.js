@@ -6,23 +6,33 @@ const adminAddress = {
 };
 
 export const handlerAccounts = (web3) => () => {
-  const { data, mutate, ...swrResponse } = useSWR(
+  const { data, error, mutate, ...swrResponse } = useSWR(
     () => (web3 ? 'web3/accounts' : null),
     async () => {
       const accounts = await web3.eth.getAccounts();
-      return accounts[0];
+      const account = accounts[0];
+
+      if (!account) {
+        throw new Error('No account found. Please connect your wallet.');
+      }
+
+      return account;
     }
   );
 
+  const mutator = (accounts) => mutate(accounts[0] ?? null);
+
   useEffect(() => {
-    window.ethereum &&
-      window.ethereum.on('accountsChanged', (accounts) =>
-        mutate(accounts[0] ?? null)
-      );
+    window?.ethereum?.on('accountsChanged', mutator);
+
+    return () => {
+      window?.ethereum?.removeListener('accountsChanged', mutator);
+    };
   }, [web3]);
 
   return {
     data,
+    error,
     isAdmin: (data && adminAddress[web3.utils.keccak256(data)]) ?? false,
     mutate,
     ...swrResponse,

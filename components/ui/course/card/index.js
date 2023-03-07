@@ -19,16 +19,16 @@ export default function Card({ course, children, canPurchase }) {
           />
         </div>
         <div className='flex-2 p-8 pb-4'>
-          <div className='uppercase tracking-wide text-sm text-indigo-500 font-semibold'>
+          <div className='uppercase tracking-wide text-indigo-500 font-semibold'>
             {course.type}
           </div>
           <Link
             href={`/courses/${course.slug}`}
-            className='h-12 block mt-1 text-lg leading-tight font-medium text-black hover:underline'
+            className='h-12 block mt-1 text-sm xs:text-lg leading-tight font-medium text-black hover:underline'
           >
             {course.title}
           </Link>
-          <p className='mt-2 text-gray-500'>
+          <p className='mt-2 text-gray-500 text-xs sm:text-sm md:text-md'>
             {course.description.substring(0, 70)}...
           </p>
           {children}

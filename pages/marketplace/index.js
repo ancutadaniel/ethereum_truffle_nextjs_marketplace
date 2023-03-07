@@ -6,16 +6,51 @@ import { Button } from '@/components/ui/common';
 import { OrderModal } from '@/components/ui/order';
 import { BaseLayout } from '@/components/ui/layout';
 import MarketplaceHeader from '@/components/ui/marketplaceHeader';
+import { useWeb3 } from '@components/providers/web3';
 
 export default function Marketplace({ courses }) {
   const [course, setCourse] = useState(null);
-  const { canPurchase } = useWallet();
+  const { account, canPurchase } = useWallet();
+  const { web3, contract } = useWeb3();
 
   const onPurchase = (course) => setCourse(course);
   const onClose = () => setCourse(null);
 
-  const purchaseCourse = (data) => {
-    console.log(data);
+  const purchaseCourse = async (order) => {
+    const hexCourseId = web3.utils.utf8ToHex(course.id);
+    const orderHash = web3.utils.soliditySha3(
+      {
+        type: 'bytes16',
+        value: hexCourseId,
+      },
+      {
+        type: 'address',
+        value: account.data,
+      }
+    );
+    const emailHash = web3.utils.soliditySha3(order.email);
+    const proof = web3.utils.soliditySha3(
+      {
+        type: 'bytes32',
+        value: emailHash,
+      },
+      {
+        type: 'bytes32',
+        value: orderHash,
+      }
+    );
+
+    try {
+      const result = await contract.methods
+        .purchaseCourse(hexCourseId, proof)
+        .send({
+          from: account.data,
+          value: web3.utils.toWei(String(order.price), 'ether'),
+        });
+      console.log(result);
+    } catch (error) {
+      console.error(`Purchase course failed: ${error}`);
+    }
   };
 
   return (
