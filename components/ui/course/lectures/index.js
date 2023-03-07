@@ -1,3 +1,6 @@
+import Link from 'next/link';
+import { Loader } from '@components/ui/common';
+
 const lectures = [
   'How to init App',
   'How to get a help',
@@ -7,7 +10,32 @@ const lectures = [
   'Safe operator',
 ];
 
-export default function Lectures({ locked }) {
+export default function Lectures({ locked, courseState, isLoading }) {
+  let linkContent;
+  if (locked) {
+    if (courseState === 'DEACTIVATED') {
+      linkContent = (
+        <Link href='/marketplace' legacyBehavior>
+          <a className='text-indigo-600 hover:text-indigo-900'>Get Access</a>
+        </Link>
+      );
+    } else if (courseState === 'PURCHASED') {
+      linkContent = (
+        <Link href='/faq' legacyBehavior>
+          <a className='text-yellow-600 hover:text-yellow-900'>
+            Waiting for approval
+          </a>
+        </Link>
+      );
+    }
+  } else {
+    linkContent = (
+      <Link href='/watch' legacyBehavior>
+        <a className='text-indigo-600 hover:text-indigo-900'>Watch</a>
+      </Link>
+    );
+  }
+
   return (
     <section className='max-w-5xl mx-auto'>
       <div className='flex flex-col'>
@@ -58,12 +86,7 @@ export default function Lectures({ locked }) {
                         </span>
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
-                        <a
-                          href='#'
-                          className='text-indigo-600 hover:text-indigo-900'
-                        >
-                          {locked ? 'Get Access' : 'Watch'}
-                        </a>
+                        {isLoading ? <Loader size='xs' /> : linkContent}
                       </td>
                     </tr>
                   ))}

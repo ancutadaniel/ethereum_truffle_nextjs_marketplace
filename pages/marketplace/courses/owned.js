@@ -2,22 +2,51 @@ import { OwnedCourseCard } from '@/components/ui/course';
 import { BaseLayout } from '@/components/ui/layout';
 import MarketplaceHeader from '@/components/ui/marketplaceHeader';
 import { Button, Message } from '@/components/ui/common';
-import { useAccount, useOwnedCourse } from '@/components/hooks/web3';
+import { useAccount, useOwnedCourses } from '@/components/hooks/web3';
 import { getAllCourses } from '@/content/courses/fetcher';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { useWeb3 } from '@/components/providers/web3';
 
 const OwnedCourses = ({ courses }) => {
   const router = useRouter();
   const { account } = useAccount();
-  const { ownedCourse } = useOwnedCourse(courses, account?.data);
+
+  const { ownedCourse } = useOwnedCourses(courses, account?.data);
+  const { requireInstall } = useWeb3();
 
   return (
     <>
       <MarketplaceHeader />
       <section className='grid grid-cols-1'>
+        {ownedCourse.isEmpty && (
+          <div className='w-1/2'>
+            <Message type='warning'>
+              <p>You don't own any courses!!!</p>
+              <Link href='/marketplace' legacyBehavior>
+                <a className='font-normal hover:underline'>
+                  <i>Purchase Course</i>
+                </a>
+              </Link>
+            </Message>
+          </div>
+        )}
+        {account.isEmpty && (
+          <div className='w-1/2'>
+            <Message type='warning'>
+              <p>{account.error.message}</p>
+            </Message>
+          </div>
+        )}
+        {requireInstall && (
+          <div className='w-1/2'>
+            <Message type='warning'>
+              <p>Please install MetaMask!</p>
+            </Message>
+          </div>
+        )}
         {ownedCourse?.data?.map((course) => (
           <OwnedCourseCard key={course.id} course={course}>
-            {/* <Message>My custom message!</Message> */}
             <Button
               onClick={() => {
                 router.push(`/courses/${course.slug}`);

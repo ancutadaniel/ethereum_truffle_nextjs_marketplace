@@ -17,11 +17,13 @@ const createWeb3State = ({
   provider = null,
   contract = null,
   isLoading = true,
+  error = null,
 }) => ({
   web3,
   provider,
   contract,
   isLoading,
+  error,
   hooks: setupHooks({ web3, contract, provider }),
 });
 
@@ -50,6 +52,9 @@ const Web3Provider = ({ children }) => {
         );
       } catch (error) {
         console.error(error);
+        setWeb3Api((prevState) =>
+          createWeb3State({ ...prevState, isLoading: false, error })
+        );
       }
     } else {
       setWeb3Api((prevState) =>
