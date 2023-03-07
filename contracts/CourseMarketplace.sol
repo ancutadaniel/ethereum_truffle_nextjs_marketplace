@@ -59,8 +59,8 @@ contract CourseMarketplace {
         return totalOwnedCourses;
     }
 
-    function getCourseById(uint256 _id) external view returns (bytes32) {
-        return ownedCourseHash[_id];
+    function getCourseByIdx(uint256 _idx) external view returns (bytes32) {
+        return ownedCourseHash[_idx];
     }
 
     function getCourseByHash(bytes32 _hash)

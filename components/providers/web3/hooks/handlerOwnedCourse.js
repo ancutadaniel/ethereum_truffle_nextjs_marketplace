@@ -4,7 +4,7 @@ import { createCourseHash } from '@utils/createCourseHash';
 
 export const handlerOwnedCourse = (web3, contract) => (course, account) => {
   const swrResp = useSWR(
-    () => (web3 && contract && account ? `web3/ownedCourse${account}` : null),
+    () => (web3 && contract && account ? `web3/ownedCourse/${account}` : null),
     async () => {
       const courseHash = createCourseHash(web3, course.id, account);
 

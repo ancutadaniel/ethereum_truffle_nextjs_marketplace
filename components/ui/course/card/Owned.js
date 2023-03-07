@@ -6,7 +6,7 @@ const STATE_COLORS = {
   DEACTIVATED: 'text-red-500 bg-red-200',
 };
 
-export default function OwnedCourseCard({ children, course }) {
+export default function OwnedCard({ children, course }) {
   const stateColor = STATE_COLORS[course?.state];
 
   return (

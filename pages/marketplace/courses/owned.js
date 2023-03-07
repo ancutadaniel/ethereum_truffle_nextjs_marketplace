@@ -1,4 +1,4 @@
-import { OwnedCourseCard } from '@/components/ui/course';
+import { OwnedCard } from '@/components/ui/course';
 import { BaseLayout } from '@/components/ui/layout';
 import MarketplaceHeader from '@/components/ui/marketplaceHeader';
 import { Button, Message } from '@/components/ui/common';
@@ -46,7 +46,7 @@ const OwnedCourses = ({ courses }) => {
           </div>
         )}
         {ownedCourse?.data?.map((course) => (
-          <OwnedCourseCard key={course.id} course={course}>
+          <OwnedCard key={course.id} course={course}>
             <Button
               onClick={() => {
                 router.push(`/courses/${course.slug}`);
@@ -54,7 +54,7 @@ const OwnedCourses = ({ courses }) => {
             >
               Watch the course
             </Button>
-          </OwnedCourseCard>
+          </OwnedCard>
         ))}
       </section>
     </>
