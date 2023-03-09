@@ -12,7 +12,7 @@ contract CourseMarketplace {
     enum State {
         Purchased,
         Activated,
-        Dezactivated
+        Deactivated
     }
 
     struct Course {
@@ -49,6 +49,38 @@ contract CourseMarketplace {
             msg.sender,
             State.Purchased
         );
+    }
+
+    function activateCourse(bytes32 _courseHash) external onlyOwner {
+        require(
+            ownedCourse[_courseHash].state == State.Purchased,
+            "Course has invalid state"
+        );
+        require(
+            ownedCourse[_courseHash].owner != address(0),
+            "Course is not created"
+        );
+        ownedCourse[_courseHash].state = State.Activated;
+        ownedCourse[_courseHash].price = 0;
+    }
+
+    function deactivateCourse(bytes32 _courseHash) external onlyOwner {
+        require(
+            ownedCourse[_courseHash].state == State.Activated,
+            "Course has invalid state"
+        );
+        require(
+            ownedCourse[_courseHash].owner != address(0),
+            "Course is not created"
+        );
+
+        (bool success, ) = payable(ownedCourse[_courseHash].owner).call{
+            value: ownedCourse[_courseHash].price
+        }("");
+
+        require(success, "Transfer Failed!");
+
+        ownedCourse[_courseHash].state = State.Deactivated;
     }
 
     function transferOwnership(address _newOwner) external onlyOwner {

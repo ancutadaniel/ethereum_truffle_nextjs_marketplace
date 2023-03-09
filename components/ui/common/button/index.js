@@ -12,6 +12,7 @@ export default function Button({
     }`,
     danger: `text-white bg-red-600 ${hover ? 'hover:bg-red-700' : ''}`,
     white: `text-indigo-600 bg-white ${hover ? 'hover:bg-gray-100' : ''}`,
+    green: `text-white bg-green-600 ${hover ? 'hover:bg-green-700' : ''}`,
   };
 
   return (

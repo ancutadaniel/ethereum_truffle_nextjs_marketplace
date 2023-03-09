@@ -41,13 +41,10 @@ export default function Marketplace({ courses }) {
     );
 
     try {
-      const result = await contract.methods
-        .purchaseCourse(hexCourseId, proof)
-        .send({
-          from: account.data,
-          value: web3.utils.toWei(String(order.price), 'ether'),
-        });
-      console.log(result);
+      await contract.methods.purchaseCourse(hexCourseId, proof).send({
+        from: account.data,
+        value: web3.utils.toWei(String(order.price), 'ether'),
+      });
     } catch (error) {
       console.error(`Purchase course failed: ${error}`);
     }
