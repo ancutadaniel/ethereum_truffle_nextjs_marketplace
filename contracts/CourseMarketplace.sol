@@ -51,6 +51,21 @@ contract CourseMarketplace {
         );
     }
 
+    function repurchaseCourse(bytes32 _courseHash) external payable {
+        require(
+            ownedCourse[_courseHash].owner != address(0),
+            "Course is not created"
+        );
+        require(hasCourseOwnership(_courseHash), "You do not own this course");
+        require(
+            ownedCourse[_courseHash].state == State.Deactivated,
+            "Course has invalid state"
+        );
+
+        ownedCourse[_courseHash].state = State.Purchased;
+        ownedCourse[_courseHash].price = msg.value;
+    }
+
     function activateCourse(bytes32 _courseHash) external onlyOwner {
         require(
             ownedCourse[_courseHash].state == State.Purchased,
@@ -66,7 +81,7 @@ contract CourseMarketplace {
 
     function deactivateCourse(bytes32 _courseHash) external onlyOwner {
         require(
-            ownedCourse[_courseHash].state == State.Activated,
+            ownedCourse[_courseHash].state == State.Purchased,
             "Course has invalid state"
         );
         require(
@@ -74,13 +89,12 @@ contract CourseMarketplace {
             "Course is not created"
         );
 
-        (bool success, ) = payable(ownedCourse[_courseHash].owner).call{
-            value: ownedCourse[_courseHash].price
-        }("");
-
-        require(success, "Transfer Failed!");
+        address payable courseOwner = payable(ownedCourse[_courseHash].owner);
+        uint256 coursePrice = ownedCourse[_courseHash].price;
+        courseOwner.transfer(coursePrice);
 
         ownedCourse[_courseHash].state = State.Deactivated;
+        ownedCourse[_courseHash].price -= coursePrice;
     }
 
     function transferOwnership(address _newOwner) external onlyOwner {

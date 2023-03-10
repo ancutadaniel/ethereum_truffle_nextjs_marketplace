@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
 const TYPES = {
-  success: 'green',
-  warning: 'yellow',
-  danger: 'red',
+  success: 'text-green-600 bg-green-100',
+  warning: 'text-yellow-600 bg-yellow-100',
+  danger: 'text-red-600 bg-red-100',
 };
 
 export default function Message({ children, type = 'success', className }) {
@@ -16,11 +16,11 @@ export default function Message({ children, type = 'success', className }) {
   const messageType = TYPES[type];
 
   return (
-    <div className={`bg-${messageType}-100 rounded-xl mb-3 ${className}`}>
+    <div className={`${messageType} rounded-xl mb-3 ${className}`}>
       <div className='max-w-7xl mx-auto py-3 px-3 sm:px-3 lg:px-3'>
         <div className='flex items-center justify-between flex-wrap'>
           <div className='w-0 flex-1 flex items-center'>
-            <div className={`ml-3 font-medium text-${messageType}-900`}>
+            <div className={`ml-3 font-medium ${messageType}`}>
               <span className='md:inline'>{children}</span>
             </div>
           </div>
@@ -32,7 +32,7 @@ export default function Message({ children, type = 'success', className }) {
             >
               <span className='sr-only'>Dismiss</span>
               <svg
-                className={`h-6 w-6 text-${messageType}-900`}
+                className={`h-6 w-6 ${messageType}`}
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
                 viewBox='0 0 24 24'

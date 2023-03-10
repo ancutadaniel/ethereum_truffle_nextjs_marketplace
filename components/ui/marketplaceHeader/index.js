@@ -1,6 +1,6 @@
 import { Wallet, EthRates } from '@/components/ui/web3';
 import { Breadcrumbs } from '@/components/ui/common';
-import { useAdmin } from '@/components/hooks/web3';
+import { useAccount } from '@/components/hooks/web3';
 
 const LINKS = [
   {
@@ -19,13 +19,14 @@ const LINKS = [
 ];
 
 const MarketplaceHeader = () => {
-  const { admin } = useAdmin({ redirectTo: '/marketplace' });
+  const { account } = useAccount();
+
   return (
     <div className='pt-4'>
       <Wallet />
       <EthRates />
       <div className='p-4 flex flex-row-reverse'>
-        <Breadcrumbs links={LINKS} isAdmin={admin.isAdmin} />
+        <Breadcrumbs links={LINKS} isAdmin={account.isAdmin} />
       </div>
     </div>
   );
