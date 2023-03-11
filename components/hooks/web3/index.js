@@ -64,7 +64,7 @@ export const useOwnedCourses = (...args) => {
     useHooks((hooks) => hooks.useOwnedCourses)(...args)
   );
   return {
-    ownedCourse: resp,
+    ownedCourses: resp,
   };
 };
 
@@ -79,11 +79,13 @@ export const useWallet = () => {
   const { account } = useAccount();
   const { network } = useNetwork();
 
-  const canPurchase = !!(account.data && network.isSupported);
+  const isConnecting = !account.hasInitialized && !network.hasInitialized;
+  const hasConnectedWallet = !!(account.data && network.isSupported);
 
   return {
     account,
     network,
-    canPurchase,
+    isConnecting,
+    hasConnectedWallet,
   };
 };

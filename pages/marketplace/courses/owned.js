@@ -12,14 +12,14 @@ const OwnedCourses = ({ courses }) => {
   const router = useRouter();
   const { account } = useAccount();
 
-  const { ownedCourse } = useOwnedCourses(courses, account?.data);
+  const { ownedCourses } = useOwnedCourses(courses, account?.data);
   const { requireInstall } = useWeb3();
 
   return (
     <>
       <MarketplaceHeader />
       <section className='grid grid-cols-1'>
-        {ownedCourse.isEmpty && (
+        {ownedCourses.isEmpty && (
           <div className='w-1/2'>
             <Message type='warning'>
               <p>You don't own any courses!!!</p>
@@ -45,7 +45,7 @@ const OwnedCourses = ({ courses }) => {
             </Message>
           </div>
         )}
-        {ownedCourse?.data?.map((course) => (
+        {ownedCourses?.data?.map((course) => (
           <OwnedCard key={course.id} course={course}>
             <Button
               onClick={() => {

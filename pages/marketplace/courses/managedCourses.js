@@ -99,7 +99,7 @@ const ManagedCourses = () => {
             {course.state === 'PURCHASED' && (
               <>
                 <Button
-                  variant='green'
+                  variant='success'
                   className='mr-2'
                   onClick={() => activateCourse(course.hash)}
                 >

@@ -11,7 +11,7 @@ export default function Wallet() {
       <div className='p-8'>
         <h1 className=' text-base md:text-md lg:text-xl break-words'>
           Hello,
-          {account.data ? account.data : 'please connect your wallet'}
+          {account.data || ' please connect your wallet'}
         </h1>
         <h2 className='subtitle mb-5 text-sm md:text-md lg:text-xl'>
           I hope you are having a great day!

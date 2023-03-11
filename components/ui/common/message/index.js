@@ -6,7 +6,19 @@ const TYPES = {
   danger: 'text-red-600 bg-red-100',
 };
 
-export default function Message({ children, type = 'success', className }) {
+const SIZES = {
+  xs: 'text-xs',
+  sm: 'text-sm',
+  md: 'text-md',
+  lg: 'text-lg',
+};
+
+export default function Message({
+  children,
+  type = 'success',
+  className,
+  size = 'md',
+}) {
   const [isDisplayed, setIsDisplayed] = useState(true);
 
   if (!isDisplayed) {
@@ -14,13 +26,14 @@ export default function Message({ children, type = 'success', className }) {
   }
 
   const messageType = TYPES[type];
+  const messageSize = SIZES[size];
 
   return (
-    <div className={`${messageType} rounded-xl mb-3 ${className}`}>
-      <div className='max-w-7xl mx-auto py-3 px-3 sm:px-3 lg:px-3'>
+    <div className={`${messageType} rounded-xl mt-2 ${className}`}>
+      <div className={`max-w-7xl mx-auto py-1 px-2`}>
         <div className='flex items-center justify-between flex-wrap'>
           <div className='w-0 flex-1 flex items-center'>
-            <div className={`ml-3 font-medium ${messageType}`}>
+            <div className={`ml-3 ${messageSize} ${messageType}`}>
               <span className='md:inline'>{children}</span>
             </div>
           </div>

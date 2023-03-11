@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import useSWR from 'swr';
 
 const networkMap = {
@@ -13,7 +12,7 @@ const networkMap = {
 const targetNetwork = networkMap[process.env.NEXT_PUBLIC_TARGET_CHAIN_ID];
 
 export const handlerNetwork = (web3) => () => {
-  const { data, error, mutate, ...swrResponse } = useSWR(
+  const { data, error, ...swrResponse } = useSWR(
     () => (web3 ? 'web3/network' : null),
     async () => {
       const chainId = await web3.eth.getChainId();
@@ -28,22 +27,11 @@ export const handlerNetwork = (web3) => () => {
     }
   );
 
-  const mutator = (chainId) => mutate(networkMap[chainId] ?? null);
-
-  useEffect(() => {
-    window?.ethereum?.on('chainChanged', mutator);
-
-    return () => {
-      window?.ethereum?.removeListener('chainChanged', mutator);
-    };
-  }, [web3]);
-
   return {
     data,
     error,
     targetNetwork,
     isSupported: data === targetNetwork,
-    mutate,
     ...swrResponse,
   };
 };
