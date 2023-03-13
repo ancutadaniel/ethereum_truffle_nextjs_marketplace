@@ -255,4 +255,188 @@ contract('CourseMarketplace', (accounts) => {
       );
     });
   });
+
+  describe('Add funds to contract', async () => {
+    it('should have funds', async () => {
+      const contractBalance = await getBalance(instance.address);
+
+      await web3.eth.sendTransaction({
+        from: buyer,
+        to: instance.address,
+        value: web3.utils.toWei('1', 'ether'),
+      });
+
+      const newContractBalance = await getBalance(instance.address);
+
+      assert.equal(
+        toBN(contractBalance)
+          .add(toBN(web3.utils.toWei('1', 'ether')))
+          .toString(),
+        newContractBalance,
+        'Contract balance is not correct'
+      );
+    });
+  });
+
+  describe('Normal Withdraw funds', async () => {
+    const funds = web3.utils.toWei('1', 'ether');
+    const overLimitFunds = web3.utils.toWei('999', 'ether');
+
+    before(async () => {
+      await web3.eth.sendTransaction({
+        from: buyer,
+        to: instance.address,
+        value: funds,
+      });
+    });
+
+    it('should NOT withdraw funds if not owner', async () => {
+      await catchRevert(
+        instance.withdraw(funds, {
+          from: buyer,
+        })
+      );
+    });
+
+    it('should fail when withdrawing over limit', async () => {
+      const owner = await instance.getContractOwner();
+      await catchRevert(
+        instance.withdraw(overLimitFunds, {
+          from: owner,
+        })
+      );
+    });
+
+    it('should withdraw funds', async () => {
+      const beforeTxOwnerBalance = await getBalance(contractOwner);
+      const beforeTxContractBalance = await getBalance(instance.address);
+
+      const result = await instance.withdraw(funds, {
+        from: contractOwner,
+      });
+
+      const txFee = await getGasCost(result);
+
+      const afterTxOwnerBalance = await getBalance(contractOwner);
+      const afterTxContractBalance = await getBalance(instance.address);
+
+      assert.equal(
+        toBN(beforeTxOwnerBalance).add(toBN(funds)).sub(toBN(txFee)).toString(),
+        afterTxOwnerBalance,
+        'Contract owner balance is not correct'
+      );
+
+      assert.equal(
+        toBN(beforeTxContractBalance).sub(toBN(funds)).toString(),
+        afterTxContractBalance,
+        'Contract balance is not correct'
+      );
+    });
+  });
+
+  describe('Emergency Withdraw funds', async () => {
+    let owner;
+
+    before(async () => {
+      owner = await instance.getContractOwner();
+    });
+
+    // cleanup
+    after(async () => {
+      await instance.startContract({
+        from: owner,
+      });
+    });
+
+    it('should NOT emergency withdraw funds if not owner', async () => {
+      await catchRevert(
+        instance.emergencyWithdraw({
+          from: buyer,
+        })
+      );
+    });
+
+    it('should have +contract funds on contract owner', async () => {
+      await instance.stopContract({
+        from: owner,
+      });
+
+      const beforeTxOwnerBalance = await getBalance(contractOwner);
+      const beforeTxContractBalance = await getBalance(instance.address);
+
+      const result = await instance.emergencyWithdraw({
+        from: owner,
+      });
+
+      const txFee = await getGasCost(result);
+
+      const afterTxOwnerBalance = await getBalance(contractOwner);
+
+      assert.equal(
+        toBN(beforeTxOwnerBalance)
+          .add(toBN(beforeTxContractBalance))
+          .sub(txFee)
+          .toString(),
+        afterTxOwnerBalance,
+        'Contract owner balance is not correct'
+      );
+    });
+
+    it('should have contract balance of 0', async () => {
+      const contractBalance = await getBalance(instance.address);
+      assert.equal(contractBalance, 0, 'Contract balance is not correct');
+    });
+  });
+
+  describe('Self destruct', async () => {
+    let owner;
+
+    before(async () => {
+      owner = await instance.getContractOwner();
+    });
+
+    it('should NOT self destruct if not owner', async () => {
+      await catchRevert(
+        instance.emergencyWithdraw({
+          from: buyer,
+        })
+      );
+    });
+
+    it('should have +contract funds on contract owner', async () => {
+      await instance.stopContract({
+        from: owner,
+      });
+
+      const beforeTxOwnerBalance = await getBalance(contractOwner);
+      const beforeTxContractBalance = await getBalance(instance.address);
+
+      const result = await instance.selfDestruct({
+        from: owner,
+      });
+
+      const txFee = await getGasCost(result);
+
+      const afterTxOwnerBalance = await getBalance(contractOwner);
+
+      assert.equal(
+        toBN(beforeTxOwnerBalance)
+          .add(toBN(beforeTxContractBalance))
+          .sub(txFee)
+          .toString(),
+        afterTxOwnerBalance,
+        'Contract owner balance is not correct'
+      );
+    });
+
+    it('should have contract balance of 0', async () => {
+      const contractBalance = await getBalance(instance.address);
+      assert.equal(contractBalance, 0, 'Contract balance is not correct');
+    });
+
+    it('should have contract code of 0', async () => {
+      const code = await web3.eth.getCode(instance.address);
+      assert.equal(code, '0x', 'Contract code is not correct');
+    });
+  });
 });
