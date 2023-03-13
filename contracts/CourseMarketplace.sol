@@ -12,7 +12,7 @@ contract CourseMarketplace {
     enum State {
         Purchased,
         Activated,
-        Dezactivated
+        Deactivated
     }
 
     struct Course {
@@ -51,6 +51,52 @@ contract CourseMarketplace {
         );
     }
 
+    function repurchaseCourse(bytes32 _courseHash) external payable {
+        require(
+            ownedCourse[_courseHash].owner != address(0),
+            "Course is not created"
+        );
+        require(hasCourseOwnership(_courseHash), "You do not own this course");
+        require(
+            ownedCourse[_courseHash].state == State.Deactivated,
+            "Course has invalid state"
+        );
+
+        ownedCourse[_courseHash].state = State.Purchased;
+        ownedCourse[_courseHash].price = msg.value;
+    }
+
+    function activateCourse(bytes32 _courseHash) external onlyOwner {
+        require(
+            ownedCourse[_courseHash].state == State.Purchased,
+            "Course has invalid state"
+        );
+        require(
+            ownedCourse[_courseHash].owner != address(0),
+            "Course is not created"
+        );
+        ownedCourse[_courseHash].state = State.Activated;
+        ownedCourse[_courseHash].price = 0;
+    }
+
+    function deactivateCourse(bytes32 _courseHash) external onlyOwner {
+        require(
+            ownedCourse[_courseHash].state == State.Purchased,
+            "Course has invalid state"
+        );
+        require(
+            ownedCourse[_courseHash].owner != address(0),
+            "Course is not created"
+        );
+
+        address payable courseOwner = payable(ownedCourse[_courseHash].owner);
+        uint256 coursePrice = ownedCourse[_courseHash].price;
+        courseOwner.transfer(coursePrice);
+
+        ownedCourse[_courseHash].state = State.Deactivated;
+        ownedCourse[_courseHash].price -= coursePrice;
+    }
+
     function transferOwnership(address _newOwner) external onlyOwner {
         setContractOwner(_newOwner);
     }
@@ -59,8 +105,8 @@ contract CourseMarketplace {
         return totalOwnedCourses;
     }
 
-    function getCourseById(uint256 _id) external view returns (bytes32) {
-        return ownedCourseHash[_id];
+    function getCourseByIdx(uint256 _idx) external view returns (bytes32) {
+        return ownedCourseHash[_idx];
     }
 
     function getCourseByHash(bytes32 _hash)

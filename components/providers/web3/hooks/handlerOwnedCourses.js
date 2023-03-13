@@ -4,7 +4,7 @@ import { createCourseHash } from '@utils/createCourseHash';
 
 export const handlerOwnedCourses = (web3, contract) => (courses, account) => {
   const swrResp = useSWR(
-    () => (web3 && contract && account ? `web3/ownedCourses${account}` : null),
+    () => (web3 && contract && account ? `web3/ownedCourses/${account}` : null),
     async () => {
       const ownedCourses = [];
       for (const course of courses) {
@@ -28,5 +28,12 @@ export const handlerOwnedCourses = (web3, contract) => (courses, account) => {
     }
   );
 
-  return { ...swrResp };
+  return {
+    ...swrResp,
+    lookup:
+      swrResp.data?.reduce((acc, course) => {
+        acc[course.id] = course;
+        return acc;
+      }, {}) ?? {},
+  };
 };

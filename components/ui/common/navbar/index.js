@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { ActiveLink, Button } from '@/components/ui/common';

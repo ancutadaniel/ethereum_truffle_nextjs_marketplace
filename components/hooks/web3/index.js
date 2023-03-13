@@ -1,4 +1,6 @@
-import { useHooks } from '@components/providers/web3';
+import { useEffect } from 'react';
+import { useHooks, useWeb3 } from '@components/providers/web3';
+import { useRouter } from 'next/router';
 
 const _isEmpty = (obj) =>
   obj == null ||
@@ -25,6 +27,24 @@ export const useAccount = () => {
   };
 };
 
+export const useAdmin = ({ redirectTo }) => {
+  const { account } = useAccount();
+  const { requireInstall } = useWeb3();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (
+      requireInstall ||
+      (account.hasInitialized && !account.isAdmin) ||
+      account.isEmpty
+    ) {
+      router.push(redirectTo);
+    }
+  }, [account]);
+
+  return { admin: account };
+};
+
 export const useNetwork = () => {
   const swr = enhanceHooks(useHooks((hooks) => hooks.useNetwork)());
   return {
@@ -44,7 +64,14 @@ export const useOwnedCourses = (...args) => {
     useHooks((hooks) => hooks.useOwnedCourses)(...args)
   );
   return {
-    ownedCourse: resp,
+    ownedCourses: resp,
+  };
+};
+
+export const useAllCourses = (...args) => {
+  const resp = enhanceHooks(useHooks((hooks) => hooks.useAllCourses)(...args));
+  return {
+    managedCourses: resp,
   };
 };
 
@@ -52,11 +79,13 @@ export const useWallet = () => {
   const { account } = useAccount();
   const { network } = useNetwork();
 
-  const canPurchase = !!(account.data && network.isSupported);
+  const isConnecting = !account.hasInitialized && !network.hasInitialized;
+  const hasConnectedWallet = !!(account.data && network.isSupported);
 
   return {
     account,
     network,
-    canPurchase,
+    isConnecting,
+    hasConnectedWallet,
   };
 };

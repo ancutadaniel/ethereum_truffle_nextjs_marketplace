@@ -1,4 +1,4 @@
-import { OwnedCourseCard } from '@/components/ui/course';
+import { OwnedCard } from '@/components/ui/course';
 import { BaseLayout } from '@/components/ui/layout';
 import MarketplaceHeader from '@/components/ui/marketplaceHeader';
 import { Button, Message } from '@/components/ui/common';
@@ -12,14 +12,14 @@ const OwnedCourses = ({ courses }) => {
   const router = useRouter();
   const { account } = useAccount();
 
-  const { ownedCourse } = useOwnedCourses(courses, account?.data);
+  const { ownedCourses } = useOwnedCourses(courses, account?.data);
   const { requireInstall } = useWeb3();
 
   return (
     <>
       <MarketplaceHeader />
       <section className='grid grid-cols-1'>
-        {ownedCourse.isEmpty && (
+        {ownedCourses.isEmpty && (
           <div className='w-1/2'>
             <Message type='warning'>
               <p>You don't own any courses!!!</p>
@@ -45,8 +45,8 @@ const OwnedCourses = ({ courses }) => {
             </Message>
           </div>
         )}
-        {ownedCourse?.data?.map((course) => (
-          <OwnedCourseCard key={course.id} course={course}>
+        {ownedCourses?.data?.map((course) => (
+          <OwnedCard key={course.id} course={course}>
             <Button
               onClick={() => {
                 router.push(`/courses/${course.slug}`);
@@ -54,7 +54,7 @@ const OwnedCourses = ({ courses }) => {
             >
               Watch the course
             </Button>
-          </OwnedCourseCard>
+          </OwnedCard>
         ))}
       </section>
     </>

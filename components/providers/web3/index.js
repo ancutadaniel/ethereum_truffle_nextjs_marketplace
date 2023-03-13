@@ -27,6 +27,10 @@ const createWeb3State = ({
   hooks: setupHooks({ web3, contract, provider }),
 });
 
+const setListener = (provider) => {
+  provider.on('chainChanged', () => window.location.reload());
+};
+
 const Web3Provider = ({ children }) => {
   const [web3Api, setWeb3Api] = useState(createWeb3State({}));
 
@@ -36,9 +40,13 @@ const Web3Provider = ({ children }) => {
     if (provider) {
       try {
         const web3 = new Web3(provider);
+        setListener(provider);
         const getNetworkId = await web3.eth.net.getId();
         const data = await CourseMarketplace.networks[getNetworkId];
         if (!data) {
+          setWeb3Api((prevState) =>
+            createWeb3State({ ...prevState, web3, isLoading: false })
+          );
           throw new Error('Smart contract not deployed to selected network');
         }
 
@@ -51,7 +59,6 @@ const Web3Provider = ({ children }) => {
           createWeb3State({ web3, provider, contract, isLoading: false })
         );
       } catch (error) {
-        console.error(error);
         setWeb3Api((prevState) =>
           createWeb3State({ ...prevState, isLoading: false, error })
         );
@@ -74,6 +81,8 @@ const Web3Provider = ({ children }) => {
       location.reload();
     }
   };
+
+  // reload the page if the user changes the network
 
   useEffect(() => {
     loadProvider();
