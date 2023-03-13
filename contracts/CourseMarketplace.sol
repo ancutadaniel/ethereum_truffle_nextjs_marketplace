@@ -4,6 +4,7 @@ pragma solidity >=0.4.22 <0.9.0;
 contract CourseMarketplace {
     uint256 private totalOwnedCourses;
     address payable private owner;
+    bool public isStoped = false;
 
     constructor() {
         setContractOwner(msg.sender);
@@ -34,9 +35,45 @@ contract CourseMarketplace {
         _;
     }
 
+    modifier contractActive() {
+        require(!isStoped, "Contract is stopped");
+        _;
+    }
+    
+    modifier contractNotActive() {
+        require(isStoped, "Contract is stopped");
+        _;
+    }
+
+    receive() external payable {}
+
+    function  withdraw(uint _amount) external onlyOwner {
+        require(_amount <= address(this).balance, "Insufficient balance");
+        (bool success, ) = payable(msg.sender).call{value: _amount}("");
+        require(success, "Transfer failed.");            
+    }
+
+    function  emergencyWithdraw() external onlyOwner contractNotActive  {        
+        (bool success, ) = payable(msg.sender).call{value: address(this).balance}("");
+        require(success, "Transfer failed.");            
+    }
+
+    function selfDestruct() external onlyOwner contractNotActive {
+        selfdestruct(payable(msg.sender));
+    }
+
+    function stopContract() external onlyOwner {
+        isStoped = true;
+    }
+
+    function startContract() external onlyOwner {
+        isStoped = false;
+    }
+
     function purchaseCourse(bytes16 _courseId, bytes32 _proof)
         external
         payable
+        contractActive
     {
         bytes32 courseHash = keccak256(abi.encodePacked(_courseId, msg.sender));
         require(!hasCourseOwnership(courseHash), "You already own this course");
@@ -51,7 +88,7 @@ contract CourseMarketplace {
         );
     }
 
-    function repurchaseCourse(bytes32 _courseHash) external payable {
+    function repurchaseCourse(bytes32 _courseHash) external payable contractActive {
         require(
             ownedCourse[_courseHash].owner != address(0),
             "Course is not created"
@@ -66,7 +103,7 @@ contract CourseMarketplace {
         ownedCourse[_courseHash].price = msg.value;
     }
 
-    function activateCourse(bytes32 _courseHash) external onlyOwner {
+    function activateCourse(bytes32 _courseHash) external onlyOwner contractActive {
         require(
             ownedCourse[_courseHash].state == State.Purchased,
             "Course has invalid state"
@@ -79,7 +116,7 @@ contract CourseMarketplace {
         ownedCourse[_courseHash].price = 0;
     }
 
-    function deactivateCourse(bytes32 _courseHash) external onlyOwner {
+    function deactivateCourse(bytes32 _courseHash) external onlyOwner contractActive {
         require(
             ownedCourse[_courseHash].state == State.Purchased,
             "Course has invalid state"
