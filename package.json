@@ -8,12 +8,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "truffle test"
+    "test": "truffle test",
+    "deploy-goerli": "truffle migrate --network goerli"
   },
   "dependencies": {
     "@metamask/detect-provider": "^2.0.0",
     "@next/font": "13.1.6",
+    "@truffle/hdwallet-provider": "^2.1.8",
     "autoprefixer": "^10.4.13",
+    "dotenv": "^16.0.3",
     "eslint": "8.34.0",
     "eslint-config-next": "13.1.6",
     "next": "13.1.6",
