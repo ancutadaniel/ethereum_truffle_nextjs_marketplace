@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import useSWR from 'swr';
 
 const networkMap = {
@@ -13,27 +12,26 @@ const networkMap = {
 const targetNetwork = networkMap[process.env.NEXT_PUBLIC_TARGET_CHAIN_ID];
 
 export const handlerNetwork = (web3) => () => {
-  const { data, error, mutate, ...swrResponse } = useSWR(
+  const { data, error, ...swrResponse } = useSWR(
     () => (web3 ? 'web3/network' : null),
     async () => {
       const chainId = await web3.eth.getChainId();
+
+      if (!chainId || !networkMap[chainId]) {
+        throw new Error(
+          'Unsupported network. Please connect to supported network.'
+        );
+      }
+
       return networkMap[chainId];
     }
   );
 
-  useEffect(() => {
-    window.ethereum &&
-      window.ethereum.on(
-        'chainChanged',
-        (chainId) => mutate(networkMap[parseInt(chainId, 16)]) ?? null
-      );
-  }, [web3]);
-
   return {
     data,
+    error,
     targetNetwork,
     isSupported: data === targetNetwork,
-    mutate,
     ...swrResponse,
   };
 };

@@ -17,6 +17,12 @@
       "@content/*": [
         "./content/*"
       ],
+      "@utils/*": [
+        "./utils/*"
+      ],
+      "@build/*": [
+        "./build/*"
+      ],
     }
   }
 }
