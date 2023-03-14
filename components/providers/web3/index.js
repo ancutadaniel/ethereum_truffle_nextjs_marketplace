@@ -4,6 +4,7 @@ import React, {
   useMemo,
   useState,
   useEffect,
+  useCallback,
 } from 'react';
 import Web3 from 'web3';
 import detectEthereumProvider from '@metamask/detect-provider';
@@ -71,7 +72,7 @@ const Web3Provider = ({ children }) => {
     }
   };
 
-  const connectWallet = async () => {
+  const connectWallet = useCallback(async () => {
     try {
       await web3Api.provider.request({
         method: 'eth_requestAccounts',
@@ -80,7 +81,7 @@ const Web3Provider = ({ children }) => {
       console.error(`Cannot connect MetaMask: ${error}`);
       location.reload();
     }
-  };
+  }, [web3Api.provider]);
 
   // reload the page if the user changes the network
 
@@ -99,7 +100,7 @@ const Web3Provider = ({ children }) => {
             console.log('Cannot connect MetaMask, try to reload the page.');
           },
     }),
-    [web3Api]
+    [web3Api, connectWallet]
   );
 
   return <Web3Context.Provider value={value}>{children}</Web3Context.Provider>;

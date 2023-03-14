@@ -59,14 +59,14 @@ export default function Navbar() {
                   Marketplace
                 </a>
               </ActiveLink>
-              <ActiveLink href='/blogs'>
+              <ActiveLink href='/'>
                 <a className='font-medium mr-8 text-gray-500 hover:text-gray-900'>
                   Blogs
                 </a>
               </ActiveLink>
             </div>
             <div className='flex justify-center items-center'>
-              <ActiveLink href='/wishlist' target='_blank'>
+              <ActiveLink href='/' target='_blank'>
                 <a className='font-medium mr-8 text-gray-500 hover:text-gray-900'>
                   Wishlist
                 </a>

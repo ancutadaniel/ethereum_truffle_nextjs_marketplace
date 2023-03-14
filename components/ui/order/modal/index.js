@@ -57,7 +57,7 @@ export default function OrderModal({
         price: pricePerCourse,
       });
     }
-  }, [course]);
+  }, [course, pricePerCourse]);
 
   const closeModal = () => {
     setIsOpen(false);
@@ -201,7 +201,7 @@ export default function OrderModal({
           <Button
             disabled={formState.isDisabled}
             onClick={() => {
-              onSubmit(order);
+              onSubmit(order, course);
               closeModal();
             }}
           >

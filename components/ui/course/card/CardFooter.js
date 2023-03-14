@@ -7,6 +7,7 @@ const CardFooter = ({
   onRepurchase,
   ownedCourses,
   isConnecting,
+  inBuyProgress,
   requireInstall,
   hasConnectedWallet,
 }) => {
@@ -31,7 +32,13 @@ const CardFooter = ({
   }
 
   if (!ownedCourses.hasInitialized) {
-    return <div style={{ height: '42px' }}></div>;
+    return (
+      <div className='flex justify-center mt-4'>
+        <Button className='w-full' variant='white' size='sm' disabled>
+          {hasConnectedWallet ? 'Initializing...' : 'Connect Wallet'}
+        </Button>
+      </div>
+    );
   }
 
   if (owned) {
@@ -51,10 +58,17 @@ const CardFooter = ({
               className='w-full'
               variant='secondary'
               onClick={() => onRepurchase(course)}
-              disabled={!hasConnectedWallet}
+              disabled={!hasConnectedWallet || inBuyProgress}
               size='sm'
             >
-              Fund to activate
+              {inBuyProgress ? (
+                <div className='flex justify-center'>
+                  <Loader size='sm' />
+                  <div className='ml-2'>In Progress</div>
+                </div>
+              ) : (
+                <div>Fund to activate</div>
+              )}
             </Button>
           )}
         </div>
@@ -68,9 +82,16 @@ const CardFooter = ({
         className='w-full'
         variant='secondary'
         onClick={() => onPurchase(course)}
-        disabled={!hasConnectedWallet}
+        disabled={!hasConnectedWallet || inBuyProgress}
       >
-        Purchase
+        {inBuyProgress ? (
+          <div className='flex justify-center'>
+            <Loader size='sm' />
+            <div className='ml-2'>In Progress</div>
+          </div>
+        ) : (
+          <div>Purchase</div>
+        )}
       </Button>
     </div>
   );
