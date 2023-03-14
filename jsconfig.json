@@ -20,8 +20,8 @@
       "@utils/*": [
         "./utils/*"
       ],
-      "@build/*": [
-        "./build/*"
+      "@contracts/*": [
+        "./contracts/*"
       ],
     }
   }
