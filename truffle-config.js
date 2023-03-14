@@ -5,7 +5,7 @@ const mnemonic = process.env.MNEMONIC;
 
 module.exports = {
   contracts_directory: './contracts',
-  contracts_build_directory: './build/abi',
+  contracts_build_directory: './contracts/abi',
   networks: {
     development: {
       host: '127.0.0.1', // Localhost (default: none)

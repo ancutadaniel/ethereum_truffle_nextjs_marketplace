@@ -9,7 +9,7 @@ import React, {
 import Web3 from 'web3';
 import detectEthereumProvider from '@metamask/detect-provider';
 import setupHooks from './hooks/setupHooks';
-import CourseMarketplace from '@build/abi/CourseMarketplace.json';
+import CourseMarketplace from '@contracts/abi/CourseMarketplace.json';
 
 export const Web3Context = createContext();
 
