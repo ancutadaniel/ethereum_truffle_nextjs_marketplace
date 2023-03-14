@@ -35,7 +35,7 @@ const CardFooter = ({
     return (
       <div className='flex justify-center mt-4'>
         <Button className='w-full' variant='white' size='sm' disabled>
-          Initializing...
+          {hasConnectedWallet ? 'Initializing...' : 'Connect Wallet'}
         </Button>
       </div>
     );
