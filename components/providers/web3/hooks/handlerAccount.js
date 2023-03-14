@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import useSWR from 'swr';
 
 // To hash the address, we use the keccak256 function from web3 we add the address without the 0x prefix and we add the 0x prefix again, in the editor we select output as hex
@@ -26,7 +26,10 @@ export const handlerAccounts = (web3) => () => {
     }
   );
 
-  const mutator = (accounts) => mutate(accounts[0] ?? null);
+  const mutator = useCallback(
+    (accounts) => mutate(accounts[0] ?? null),
+    [mutate]
+  );
 
   useEffect(() => {
     window?.ethereum?.on('accountsChanged', mutator);
@@ -34,7 +37,7 @@ export const handlerAccounts = (web3) => () => {
     return () => {
       window?.ethereum?.removeListener('accountsChanged', mutator);
     };
-  }, [web3]);
+  }, [mutator]);
 
   return {
     data,

@@ -40,7 +40,11 @@ export default function Wallet() {
             )}
             {requireInstall && (
               <div className='bg-yellow-400 p-4 rounded-lg'>
-                <a href='https://metamask.io/download.html' target={'_blank'}>
+                <a
+                  href='https://metamask.io/download.html'
+                  target={'_blank'}
+                  rel='noreferrer'
+                >
                   <span className='flex items-center'>
                     Please install MetaMask to continue
                   </span>

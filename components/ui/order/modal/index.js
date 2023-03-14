@@ -57,7 +57,7 @@ export default function OrderModal({
         price: pricePerCourse,
       });
     }
-  }, [course]);
+  }, [course, pricePerCourse]);
 
   const closeModal = () => {
     setIsOpen(false);

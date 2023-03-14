@@ -22,7 +22,7 @@ const OwnedCourses = ({ courses }) => {
         {ownedCourses.isEmpty && (
           <div className='w-1/2'>
             <Message type='warning'>
-              <p>You don't own any courses!!!</p>
+              <p>You don&apos;t own any courses!!!</p>
               <Link href='/marketplace' legacyBehavior>
                 <a className='font-normal hover:underline'>
                   <i>Purchase Course</i>
