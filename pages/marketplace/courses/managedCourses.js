@@ -7,6 +7,7 @@ import { useAllCourses, useAdmin } from '@/components/hooks/web3';
 import { useWeb3 } from '@/components/providers/web3';
 import { normalizeOwnedCourse } from '@/utils/normalize';
 import Link from 'next/link';
+import withToast from '@/utils/toast';
 
 const VerifyInput = ({ onVerified }) => {
   const [email, setEmail] = useState('');
@@ -62,20 +63,21 @@ const ManagedCourses = () => {
 
   const changeCourseState = async (courseHash, method) => {
     try {
-      await contract.methods[method](courseHash).send({
+      const result = await contract.methods[method](courseHash).send({
         from: admin.data,
       });
+      return result;
     } catch (error) {
-      console.log(error);
+      throw new Error(error.message);
     }
   };
 
   const activateCourse = async (courseHash) => {
-    changeCourseState(courseHash, 'activateCourse');
+    withToast(changeCourseState(courseHash, 'activateCourse'));
   };
 
   const deactivateCourse = async (courseHash) => {
-    changeCourseState(courseHash, 'deactivateCourse');
+    withToast(changeCourseState(courseHash, 'deactivateCourse'));
   };
 
   const handleOnSearch = async (courseHash) => {

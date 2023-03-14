@@ -9,12 +9,15 @@ import MarketplaceHeader from '@/components/ui/marketplaceHeader';
 import { useWeb3 } from '@components/providers/web3';
 import CardFooter from '@/components/ui/course/card/CardFooter';
 
+import withToast from '@/utils/toast';
+
 export default function Marketplace({ courses }) {
   const [course, setCourse] = useState(null);
   const { web3, contract, requireInstall } = useWeb3();
   const { account, hasConnectedWallet, isConnecting } = useWallet();
   const { ownedCourses } = useOwnedCourses(courses, account?.data);
   const [isNewPurchase, setIsNewPurchase] = useState(true);
+  const [courseToBuy, setCourseToBuy] = useState(null);
 
   const onPurchase = (course) => setCourse(course);
   const onClose = () => {
@@ -22,7 +25,7 @@ export default function Marketplace({ courses }) {
     setIsNewPurchase(true);
   };
 
-  const purchaseCourse = async (order) => {
+  const purchaseCourse = (order, course) => {
     const hexCourseId = web3.utils.utf8ToHex(course.id);
     const orderHash = web3.utils.soliditySha3(
       {
@@ -34,6 +37,8 @@ export default function Marketplace({ courses }) {
         value: account.data,
       }
     );
+
+    setCourseToBuy(course.id);
 
     if (isNewPurchase) {
       const emailHash = web3.utils.soliditySha3(order.email);
@@ -47,11 +52,11 @@ export default function Marketplace({ courses }) {
           value: orderHash,
         }
       );
-      await _purchaseCourse(hexCourseId, proof, order);
+      withToast(_purchaseCourse(hexCourseId, proof, order, course));
     }
 
     if (!isNewPurchase) {
-      await _repurchaseCourse(orderHash, order);
+      withToast(_repurchaseCourse(orderHash, order, course));
     }
   };
 
@@ -60,26 +65,54 @@ export default function Marketplace({ courses }) {
     setCourse(course);
   };
 
-  const _purchaseCourse = async (hexCourseId, proof, order) => {
+  const _purchaseCourse = async (hexCourseId, proof, order, course) => {
     try {
-      await contract.methods.purchaseCourse(hexCourseId, proof).send({
-        from: account.data,
-        value: web3.utils.toWei(String(order.price), 'ether'),
-      });
+      const result = await contract.methods
+        .purchaseCourse(hexCourseId, proof)
+        .send({
+          from: account.data,
+          value: web3.utils.toWei(String(order.price), 'ether'),
+        });
+      ownedCourses.mutate([
+        ...ownedCourses.data,
+        {
+          ...course,
+          proof,
+          state: 'PURCHASED',
+          owner: account.data,
+          price: order.price,
+        },
+      ]);
+      return result;
     } catch (error) {
-      console.error(`Purchase course failed: ${error}`);
+      throw new Error(`Purchase course failed: ${error.message}`);
+    } finally {
+      setCourseToBuy(null);
     }
   };
 
-  const _repurchaseCourse = async (orderHash, order) => {
-    console.log('repurchase', account.data, order.price, orderHash);
+  const _repurchaseCourse = async (orderHash, order, course) => {
     try {
-      await contract.methods.repurchaseCourse(orderHash).send({
+      const result = await contract.methods.repurchaseCourse(orderHash).send({
         from: account.data,
         value: web3.utils.toWei(String(order.price), 'ether'),
       });
+
+      const courseIndex = ownedCourses.data.findIndex(
+        (ownedCourse) => ownedCourse.id === course.id
+      );
+
+      if (courseIndex >= 0) {
+        ownedCourses.data[courseIndex].state = 'PURCHASED';
+        ownedCourses.mutate(ownedCourses.data);
+      }
+
+      ownedCourses.mutate();
+      return result;
     } catch (error) {
-      console.error(`Purchase course failed: ${error}`);
+      throw new Error(`Repurchase course failed: ${error.message}`);
+    } finally {
+      setCourseToBuy(null);
     }
   };
 
@@ -103,6 +136,7 @@ export default function Marketplace({ courses }) {
               ownedCourses={ownedCourses}
               owned={ownedCourses.lookup[course?.id]}
               requireInstall={requireInstall}
+              inBuyProgress={courseToBuy === course?.id}
             />
           </CourseCard>
         )}
